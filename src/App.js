@@ -1,11 +1,17 @@
 import React from "react";
-import "./App.css";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Navbar from "./components/layout/Navbar";
 
 function App() {
   return (
-    <div className="App">
-      <h1>Client Panel</h1>
-    </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <div className="container">
+          <h1>Client Panel</h1>
+        </div>
+      </div>
+    </Router>
   );
 }
 
