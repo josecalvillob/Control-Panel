@@ -1,26 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
 
 class Clients extends Component {
   render() {
-    const clients = [
-      {
-        id: "243r4532",
-        firstName: "Jose",
-        lastName: "Smith",
-        email: "josesmith@email.com",
-        phone: "333-333-3333",
-        balance: "20"
-      },
-      {
-        id: "04977c73",
-        firstName: "Rick",
-        lastName: "James",
-        email: "rickjames@mail.com",
-        phone: "555-555-5555",
-        balance: "1"
-      }
-    ];
+    const { clients } = this.props;
 
     // Don't want to load this before we get the clients from firebase
     if (clients) {
@@ -74,4 +61,17 @@ class Clients extends Component {
   }
 }
 
-export default Clients;
+// Proptypes
+Clients.propTypes = {
+  firestore: PropTypes.object.isRequired,
+  clients: PropTypes.array
+};
+
+// Want firestore connect and regular connect from react-redux
+// Basically mapping state to props here
+export default compose(
+  firestoreConnect([{ collection: "clients" }]),
+  connect((state, props) => ({
+    clients: state.firestore.ordered.clients
+  }))
+)(Clients);
