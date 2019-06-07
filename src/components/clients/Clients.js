@@ -7,8 +7,27 @@ import { firestoreConnect } from "react-redux-firebase";
 import Spinner from "../layout/Spinner";
 
 class Clients extends Component {
+  state = {
+    totalOwed: null
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    // get clients from props
+    const { clients } = props;
+
+    if (clients) {
+      // Add total owed
+      const total = clients.reduce((total, client) => {
+        return total + parseFloat(client.balance.toString());
+      }, 0);
+      return { totalOwed: total };
+    }
+    return null;
+  }
+
   render() {
     const { clients } = this.props;
+    const { totalOwed } = this.state;
 
     // Don't want to load this before we get the clients from firebase
     if (clients) {
@@ -22,7 +41,12 @@ class Clients extends Component {
               </h2>
             </div>
             <div className="col-md-6">
-              <h2>Balance Owed</h2>
+              <h5 className="text-right text-secondary">
+                Balance Owed{" "}
+                <span className="text-primary">
+                  ${parseFloat(totalOwed).toFixed(2)}
+                </span>
+              </h5>
             </div>
           </div>
           <table className="table table-striped">
