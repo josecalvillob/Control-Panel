@@ -5,6 +5,7 @@ import store from "./store";
 import Navbar from "./components/layout/Navbar";
 import Dashboard from "./components/layout/Dashboard";
 import AddClient from "./components/clients/AddClient";
+import ClientDetails from "./components/clients/ClientDetails";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Switch>
               <Route exact path="/" component={Dashboard} />
               <Route exact path="/client/add" component={AddClient} />
+              <Route exact path="/client/:id" component={ClientDetails} />
             </Switch>
           </div>
         </div>
