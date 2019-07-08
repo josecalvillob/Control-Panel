@@ -18,8 +18,8 @@ class Settings extends Component {
     setDisableBalanceOnEdit();
   };
   allowRegistrationChange = () => {
-    const { allowRegistration } = this.props;
-    allowRegistration();
+    const { setAllowRegistration } = this.props;
+    setAllowRegistration();
   };
 
   render() {
@@ -48,7 +48,7 @@ class Settings extends Component {
                   type="checkbox"
                   name="allowRegistration"
                   checked={allowRegistration}
-                  onChange={this.allowRegistationChange}
+                  onChange={this.allowRegistrationChange}
                 />
               </div>
               <div className="form-group">
