@@ -4,16 +4,16 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { notifyUser } from "../../actions/notifyActions";
 import Alert from "../layout/Alert";
+import { firebaseConnect } from "react-redux-firebase";
+import { Redirect } from "react-router-dom";
 
-// firebaseConnect instead of firestoreConnect because we're dealing with authentication
-import { firesbaseConnect, firebaseConnect } from "react-redux-firebase";
-
-class Login extends Component {
+class Register extends Component {
   state = {
     email: "",
     password: ""
   };
 
+  // clears alert from other page
   componentWillMount() {
     const { notifyUser } = this.props;
     notifyUser("", "");
@@ -23,24 +23,24 @@ class Login extends Component {
     e.preventDefault();
     const { firebase, notifyUser } = this.props;
     const { email, password } = this.state;
+
+    // Register user with firebase
     firebase
-      .login({ email, password })
-      // notifyUser('message', 'messageType')
-      .catch(error => notifyUser("Invalid login Credentials", "error"));
-    // firebase
-    //   .auth()
-    //   .signInWithEmailAndPassword(email, password)
-    //   .then(user => {
-    //     console.log(user);
-    //     this.props.history.push("/");
-    //   })
-    //   .catch(error => alert("Invalid login Credentials"));
+      .createUser({ email, password })
+      .catch(err => notifyUser("That user already exists", "error"));
   };
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
     const { message, messageType } = this.props.notify;
+    const { allowRegistration } = this.props.settings;
+
+    // if registration is not allowed, redirect to login page
+    if (!allowRegistration) {
+      return <Redirect to={"/login"} />;
+    }
+
     return (
       <div className="row">
         <div className="col-md-6 mx-auto">
@@ -51,7 +51,7 @@ class Login extends Component {
               ) : null}
               <h1 className="text-danger pb-4 pt-3">
                 <span className="text-primary">
-                  <i className="fas fa-lock" /> Login
+                  <i className="fas fa-lock" /> Register
                 </span>
               </h1>
               <form onSubmit={this.onSubmit}>
@@ -79,7 +79,7 @@ class Login extends Component {
                 </div>
                 <input
                   type="submit"
-                  value="Login"
+                  value="Register"
                   className="btn btn-primary btn-block"
                 />
               </form>
@@ -91,7 +91,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Register.propTypes = {
   firebase: PropTypes.object.isRequired,
   notify: PropTypes.object.isRequired,
   notifyUser: PropTypes.func.isRequired
@@ -101,8 +101,9 @@ export default compose(
   firebaseConnect(),
   connect(
     (state, props) => ({
-      notify: state.notify
+      notify: state.notify,
+      settings: state.settings
     }),
     { notifyUser } //When you have actions you have to add it here as a property
   )
-)(Login);
+)(Register);

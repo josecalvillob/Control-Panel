@@ -41,6 +41,7 @@ class EditContact extends Component {
 
   render() {
     const { client } = this.props;
+    const { disableBalanceOnEdit } = this.props.settings;
     if (client) {
       return (
         <div>
@@ -110,6 +111,7 @@ class EditContact extends Component {
                     name="balance"
                     ref={this.balanceInput}
                     defaultValue={client.balance}
+                    disabled={disableBalanceOnEdit}
                   />
                 </div>
                 <input type="submit" className="btn btn-primary btn-block" />
@@ -132,7 +134,11 @@ export default compose(
   firestoreConnect(props => [
     { collection: "clients", storeAs: "client", doc: props.match.params.id }
   ]),
-  connect(({ firestore: { ordered } }, props) => ({
-    client: ordered.client && ordered.client[0]
+
+  // instead of passing state here, I destructured it to get firestore
+  // so I can just add "settings" to the destructuring to get it from state
+  connect(({ firestore: { ordered }, settings }, props) => ({
+    client: ordered.client && ordered.client[0],
+    settings
   }))
 )(EditContact);
